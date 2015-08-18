@@ -12,9 +12,10 @@
 
 (defn num-neighbors [{:keys [height width cells]} [i j]]
   (let [in-bounds? (fn [[i j]]
-                     (and (> i 0) (< i height) (> j 0) (< j height)))
+                     (and (>= i 0) (< i height) (>= j 0) (< j height)))
         living?    (partial contains? cells)]
-    (->> (for [di [-1 0 1] dj [-1 0 1]] [(+ i di) (+ j dj)])
+    (->> (for [di [-1 0 1] dj [-1 0 1] :when (not (and (= di 0) (= dj 0)))]
+           [(+ i di) (+ j dj)])
          (filter in-bounds?)
          (filter living?)
          (count))))
@@ -40,7 +41,7 @@
     (take-while living? (iterate next-grid grid))))
 
 (defn grid->str [{:keys [height width cells]}]
-  (let [cell->str (fn [cell] (if (cells cell) "o" "x"))
+  (let [cell->str (fn [cell] (if (cells cell) "o" "_"))
         row->str (fn [i] (apply str (map cell->str (map (partial conj [i]) (range width)))))]
   (join "\n" (map row->str (range height)))))
 
