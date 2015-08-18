@@ -28,9 +28,9 @@
 (defn next-grid [{:keys [height width cells] :as grid}]
   (let [should-live? (fn [cell]
                        (let [n (num-neighbors grid cell)]
-                         (if (contains? cells cell)
-                           (and (> n 1) (< n 3))
-                           (= n 3))))]
+                         (or
+                           (= n 3)
+                           (and (contains? cells cell) (= n 2)))))]
     (->> (coords grid)
          (filter should-live?)
          (set)
