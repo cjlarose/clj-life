@@ -12,12 +12,12 @@
 
 (defn num-neighbors [{:keys [height width cells]} [i j]]
   (let [in-bounds? (fn [[i j]]
-                     (and (> i 0) (< i height) (> j 0) (< j height)))]
-    (count (for [di [-1 0 1]
-                 dj [-1 0 1]
-                 :let [neighbor [(+ i di) (+ j dj)]]
-                 :when (in-bounds? neighbor)]
-             neighbor))))
+                     (and (> i 0) (< i height) (> j 0) (< j height)))
+        living?    (partial contains? cells)]
+    (->> (for [di [-1 0 1] dj [-1 0 1]] [(+ i di) (+ j dj)])
+         (filter in-bounds?)
+         (filter living?)
+         (count))))
 
 (defn coords [{:keys [height width]}]
   (for [i (range height)
@@ -27,7 +27,7 @@
 (defn next-grid [{:keys [height width cells] :as grid}]
   (let [should-live? (fn [cell]
                        (let [n (num-neighbors grid cell)]
-                         (if (cells cell)
+                         (if (contains? cells cell)
                            (and (> n 1) (< n 3))
                            (= n 3))))]
     (->> (coords grid)
