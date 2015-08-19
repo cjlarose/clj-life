@@ -52,7 +52,7 @@
     (take-while living? (iterate next-grid grid))))
 
 (defn grid->str [{:keys [height width cells]}]
-  (let [cell->str (fn [cell] (if (cells cell) "o" "_"))
+  (let [cell->str (fn [cell] (if (cells cell) "o" " "))
         row->str (fn [i] (apply str (map cell->str (map (partial conj [i]) (range width)))))]
   (join "\n" (map row->str (range height)))))
 
@@ -64,4 +64,4 @@
     (doseq [grid future-grids]
       (println (grid->str grid))
       (println)
-      (Thread/sleep 100))))
+      (Thread/sleep 10))))
